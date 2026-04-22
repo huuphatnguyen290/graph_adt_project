@@ -1,33 +1,48 @@
 #ifndef VERTEX_H
 #define VERTEX_H
-#include <string>
-#include <vector>
+
+#include <list>
 #include "Edge.h"
 
-class Vertex {
+template <typename T> class Edge; // forward
+
+template <typename T> class Vertex {
     private:
-        std::string name;
-        std::vector<Edge*> edgeList;
+        /*  The vertex object for a vertex v storing 
+            element x has member variables for: */
+        // Element x    
+        T data;
+        // The position (or entry) of the vertex-object in collection V
+        size_t pos;
+
+        std::list<Edge<T>*> incidenceEdges;
     public:
         //  Constructor
-        Vertex(std::string name) {
-            this->name = name;
+        Vertex(const T& data, size_t pos) : data(data), pos(pos) {}
+
+        //  Add an incident edge
+        void addEdge(Edge<T>* newEdge) {
+            incidenceEdges.push_back(newEdge);
         }
-        // Return the element associated with u
-        std::string operator*() {
-            return name;
+
+        /*  ==========
+            Vertex ADT
+            ==========*/
+        //  Return data
+        const T& operator*() const {
+            return data;
         }
-        // Return an edge list of the edges incident on u
-        std::vector<Edge*> incidentEdges() {
-            return edgeList;
-        }
-        // Test whether vertices u and v are adjacent
-        bool isAdjacentTo(Vertex* v) {
-            for (Edge* e : edgeList) {
+        //  Return a list of incident edges to v
+        const std::list<Edge<T>*>& incidentEdges() const {
+            return incidenceEdges;
+        }    
+        //  Test whether vertices u and v are adjacent
+        bool isAdjacentTo(Vertex<T>* v) const {
+            for (Edge<T>* e : incidenceEdges) {
                 if (e->opposite(this) == v) 
                     return true;
             }
-            return false;
+        return false;
         }
 };
 

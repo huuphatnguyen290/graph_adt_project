@@ -2,18 +2,20 @@
 #define GRAPH_H
 
 #include <list>
-
-// forward declaration
-class Vertex;
-class Edge;
+#include "Vertex.h"
+#include "Edge.h"
 
 template <typename T> class Graph {
     private:
-        std::list<Vertex*> adjList; // Adjacency List
         std::vector<Vertex*> vList;
         std::vector<Edge*> eList;
     public:
-        //   Return a vertex list of all the vertices of the graph.
+        //  Getter for vList;
+
+        /*  =========
+            Graph ADT
+            =========*/
+        //  Return a vertex list of all the vertices of the graph.
         std::vector<Vertex*> vertices() {
             return vList;
         }
@@ -21,14 +23,31 @@ template <typename T> class Graph {
         std::vector<Edge*> edges() {
             return eList;
         }
+
+        /*  ===================================================
+            These functions need to be implemented in Graph.cpp
+            ===================================================*/
         //  Insert and return a new vertex storing element x
-        Vertex::Vertex* insertVertex(x);
+        template <typename T> Vertex<T>* Graph<T>::insertVertex(T data) {
+            Vertex<T>* v = new Vertex(data);
+            vList.push_back(v);
+            return v;
+        }
         /*  Insert and return a new undeirected edge with 
             end vertices v and w and storing element x*/
-        Edge::Edge* insertEdge(v,w,x);
+        template <typename T> Edge<T>* Graph<T>::insertEdge(Vertex* v, Vertex* w, T data) {
+            Edge<T>* e = new Edge(v, w, data);
+            eList.push_back(v);
+            v->edgeList.push_back(e);
+            return e;
+        }
         //  Remove vertex v and all its incident edges
-        void eraseVertex(v);
+        void eraseVertex(Vertex<T>* v) {
+    
+        }
         // Remove edge e
-        void eraseEdge(e);
+        void eraseEdge(e) {
+
+        }
 };
 #endif
