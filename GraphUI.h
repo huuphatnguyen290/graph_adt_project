@@ -115,9 +115,9 @@ template <typename V, typename E> static void userInteraction(Graph<V, E>& graph
             int index = getInput(0,graph.vertices().size());
 
             Vertex<V, E>* specificVertex = graph.vertices()[index];
-            printLine();
-            std::cout << "| Here is all the incident edges       |\n";
-            std::cout << "| Format: [vertex 1] [vertex 2] [data] |\n";
+            displayPrompt( "| Here is all the incident edges       |\n",
+                           "| Format: [vertex 1] [vertex 2] [data] |\n");
+
             i = 0;
             for (Edge<V, E>* e : specificVertex->incidentEdges()) {
                 std::pair<Vertex<V, E>*, Vertex<V, E>*> p = e->endVertices();   

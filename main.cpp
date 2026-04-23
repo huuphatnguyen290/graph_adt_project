@@ -6,6 +6,7 @@
 #include "Vertex.h"
 #include "Graph.h"
 #include "GraphBuilder.h"
+#include "GraphUI.h"
 
 int main() {
     
