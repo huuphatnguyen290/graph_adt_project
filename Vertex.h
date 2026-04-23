@@ -6,12 +6,13 @@
 
 template <typename V, typename E> class Edge; // forward declaration
 
-// A vertex object is shortened to v
 template <typename V, typename E> class Vertex {
     private:
-        //
+        /*  The vertex object for a vertex v storing 
+            element x has member variables for: */
+        //  Element x    
         V data;
-        // List all edge incident to v
+        //
         std::list<Edge<V, E>*> incidenceEdges;
     public:
         //  Constructor
@@ -30,7 +31,7 @@ template <typename V, typename E> class Vertex {
         /*  ==========
             Vertex ADT
             ==========*/
-        //  Overload the (*) operator, return data
+        //  Return data
         const V& operator*() const {
             return data;
         }

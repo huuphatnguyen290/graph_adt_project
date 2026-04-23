@@ -20,6 +20,7 @@
 #include "Edge.h"
 #include "Graph.h"
 
+//  Function prototype
 // trim(string s) -> "    s" = "s"
 static inline std::string trim(const std::string& s) {
     size_t start = s.find_first_not_of(" \t");
@@ -67,24 +68,21 @@ template <typename V, typename E> Graph<V, E> loadGraph() {
 
         std::stringstream ss(line);
 
-        // Header line: comma-separated vertices
-        if (line.find(',') != std::string::npos) {
-            std::string v;
+        std::string u, v, w;
 
-            while (std::getline(ss, v, ',')) {
-                v = trim(v);
-                if (!v.empty()) {
-                    map[v] = g.insertVertex(v);
-                }
-            }
-            continue;
-        }
+        // split by TAB
+        std::getline(ss, u, '\t');
+        std::getline(ss, v, '\t');
+        std::getline(ss, w, '\t');
 
-        // Edge line: whitespace-separated
-        std::string u, v;
-        double w;
+        u = trim(u);
+        v = trim(v);
+        w = trim(w);
 
-        if (!(ss >> u >> v >> w)) continue;
+        // skip malformed lines
+        if (u.empty() || v.empty() || w.empty()) continue;
+
+        double weight = std::stod(w); // Turn string into number
 
         // create vertices if they don’t exist
         if (!map.count(u))
@@ -94,7 +92,7 @@ template <typename V, typename E> Graph<V, E> loadGraph() {
             map[v] = g.insertVertex(v);
 
         // create edge
-        g.insertEdge(map[u], map[v], w);
+        g.insertEdge(map[u], map[v], weight);
     }
 
     return g;
@@ -102,10 +100,12 @@ template <typename V, typename E> Graph<V, E> loadGraph() {
 
 /*  =======================================
     [Helper Function for userInteraction()] 
-    Display options menu
+    Display options menu and get int input
     =======================================*/
-inline void displayOptions() {
-//  std::cout << "" << "\n";
+inline int getInput() {
+    std::string input;
+
+    //  std::cout << "" << "\n";
     std::cout << "+==================================+" << "\n";
     std::cout << "| What would you like to do?       |" << "\n";
     std::cout << "+==================================+" << "\n";
@@ -115,17 +115,9 @@ inline void displayOptions() {
     std::cout << "|4. Erase a vertex                 |" << "\n";
     std::cout << "|5. Exit                           |" << "\n";
     std::cout << "+==================================+" << "\n";
-
-}
-
-/*  =======================================
-    [Helper Function for userInteraction()] 
-    Get and validate user's int input
-    =======================================*/
-inline int getInput() {
-    std::string input;
     std::cout << "Input: ";
     std::cin >> input;
+
 
     // Check that input is all digits
     bool valid = true;
@@ -144,7 +136,6 @@ inline int getInput() {
 template <typename V, typename E> static void userInteraction(Graph<V, E>& graph) {
     int input;
     while (true) {
-        displayOptions();
         input = getInput();
         if (input == -1) {
             std::cout << "Invalid input. Please try again.\n";
@@ -152,27 +143,9 @@ template <typename V, typename E> static void userInteraction(Graph<V, E>& graph
         }
 
         switch (input) {
-        case 1: {
-            std::cout << "+==================================+\n";
-            std::cout << "| List of vertices (" << graph.vertices().size() <<"):  |\n"; 
+        case 1:
             
-            int i = 1;
-            for (Vertex<V, E>* v : graph.vertices()) {
-                std::cout << "|" << i++ << ". " << **v << "  |\n";
-            }
-            
-            std::cout << "| Please specify the vertex        |\n"; 
-            int index = getInput();
-            Vertex<V, E>* specificVertex = graph.vertices()[index];
-            std::cout << "Here is all incident edges";
-            i = 1;
-
-            for (Edge<V, E>* e : specificVertex->incidentEdges()) {
-                std::cout << "|" << i++ << ". " << **e << "  |\n";
-            }
-
             break;
-        }
         case 2:
             break;
         case 3:
