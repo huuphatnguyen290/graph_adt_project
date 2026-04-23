@@ -10,6 +10,8 @@
 int main() {
     
     Graph<std::string, double> graph = loadGraph<std::string, double>();
+    
     userInteraction(graph);
+    
     return 0;
 }

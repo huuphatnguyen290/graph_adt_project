@@ -23,7 +23,7 @@ template <typename V, typename E> class Edge {
         /*  ========
             Edge ADT
             ========*/
-        //  Return data stored in e
+        //  Overload the (*) operator, return data stored in e
         const E& operator*() const {
             return data;
         }

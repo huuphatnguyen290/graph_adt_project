@@ -26,11 +26,11 @@ template <typename V, typename E> class Graph {
             Graph ADT
             =========*/
         //  Return a vertex list of all the vertices of the graph.
-        std::vector<Vertex<V, E>*> vertices() {
+        std::vector<Vertex<V, E>*>& vertices() {
             return vList;
         }
         //  Return an edge list of all the edges of the graph.
-        std::vector<Edge<V, E>*> edges() {
+        std::vector<Edge<V, E>*>& edges() {
             return eList;
         }
 
