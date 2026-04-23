@@ -20,16 +20,31 @@
 #include "Edge.h"
 #include "Graph.h"
 
-
-// Helper Function
+/*  ==========================================
+    Helper Functions used by userInteraction()
+    ==========================================*/
 void printLine() {
     std::cout << "+======================================+\n";
 }
 
-/*  =======================================
-    [Helper Function for userInteraction()] 
+/*  =============================================
+    [Variadic template (C++17 or later)]
+    displayPrompt() can: 
+    - Take multiple arguments like std::cout
+    - And wrap them in between printLine()'s line
+    =============================================*/
+template <typename... Args>
+void displayPrompt(Args&&... args) {
+    printLine();
+    
+    (std::cout << ... << args);  // fold expression (C++17)
+
+    printLine();
+}
+
+/*  ====================
     Display options menu
-    =======================================*/
+    ====================*/
 inline void displayOptions() {
 //  std::cout << "" << "\n";
     printLine();
@@ -43,11 +58,10 @@ inline void displayOptions() {
     printLine();
 }
 
-/*  =======================================
-    [Helper Function for userInteraction()] 
+/*  ==============================
     Get user's int input
     Check range: min < input < max
-    =======================================*/
+    ==============================*/
 inline int getInput(int min, int max) {
     while (true) {
         std::string input;
@@ -65,14 +79,14 @@ inline int getInput(int min, int max) {
 
         // Input check
         if (!valid || input.empty()) {
-            std::cout << "Invalid input. Please enter a number.\n";
+            std::cout << "[Invalid Input] Please enter a valid integer.\n";
             continue;
         }
 
         // Range check
         int value = std::stoi(input);
         if (value < min || value > max) {
-            std::cout << "Input of out range (" << min << "-" << max << ")";
+            std::cout << "[Out of Range] Please enter an integer in range (" << min << "-" << max << ")\n";
             continue;
         }
 
@@ -88,17 +102,14 @@ template <typename V, typename E> static void userInteraction(Graph<V, E>& graph
 
         switch (input) {
         case 1: {
-            printLine();
-            std::cout << "| List of vertices (" << graph.vertices().size() <<"):                |\n"; 
-            printLine();
+            displayPrompt("| List of vertices (", graph.vertices().size(), "):                |\n");
+
             int i = 0;
             for (Vertex<V, E>* v : graph.vertices()) {
                 std::cout << "|" << i++ << ". " << **v << "                                  |\n";
             }
             
-            printLine();
-            std::cout << "| Please specify the vertex            |\n"; 
-            printLine();
+            displayPrompt("| Please specify the vertex:           |\n");
     
             // Validate user's input
             int index = getInput(0,graph.vertices().size());
