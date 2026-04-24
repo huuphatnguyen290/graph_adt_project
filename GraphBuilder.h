@@ -1,103 +1,78 @@
 #ifndef GRAPH_BUILDER_H
 #define GRAPH_BUILDER_H
 
-//  I/O stream
 #include <iostream>
 #include <fstream>
-//  String parsing
 #include <sstream>
 #include <string>
-//  Container
-#include <vector>
 #include <unordered_map>
-//  Utilities
-#include <algorithm>
-#include <cctype>
-#include <limits>
 
-// Header files
 #include "Vertex.h"
 #include "Edge.h"
 #include "Graph.h"
 
 
-/*  =====================================================
-    [Helper Function for loadGraph()] 
-    Removes leading and trailing whitespace from a string
-    =====================================================*/
+// Remove leading and trailing whitespace
 static inline std::string trim(const std::string& s) {
-    size_t start = s.find_first_not_of(" \t");
-    size_t end = s.find_last_not_of(" \t");
-
+    size_t start = s.find_first_not_of(" \t\r\n");
+    size_t end   = s.find_last_not_of(" \t\r\n");
     if (start == std::string::npos) return "";
     return s.substr(start, end - start + 1);
 }
 
-/*  =============================================
-    [Helper Function for loadGraph()] 
-    get file name and open file, repeat if failed
-    =============================================*/
+// Ask user for a file name and open it, retry on failure
 static inline void openFile(std::ifstream& file) {
     std::string filename;
-
     while (true) {
-        std::cout << "Enter file name: ";
+        std::cout << "Enter the file name: ";
         std::getline(std::cin >> std::ws, filename);
         file.open(filename);
-
         if (file.is_open()) {
-            std::cout << "Thank you. your graph from " << filename << " is ready.\n";
+            std::cout << "Thank you. Your graph is ready.\n\n";
             return;
         }
-
-        std::cout << "Error: could not open " << filename << ". Try again\n";
-        file.clear(); // reset error state
+        std::cout << "Error: could not open \"" << filename << "\". Please try again.\n";
+        file.clear();
     }
 }
 
-template <typename V, typename E> Graph<V, E> loadGraph() {
-    // Try to open file
+// Build a Graph from a file.
+// Line 1: vertex list separated by commas or tabs
+// Remaining lines: edge lines with format: vertex1  vertex2  weight
+template <typename V, typename E>
+Graph<V, E> loadGraph() {
     std::ifstream file;
     openFile(file);
 
     Graph<V, E> g;
-
     std::unordered_map<std::string, Vertex<V, E>*> map;
     std::string line;
 
-    // Read line if there is a line
-    while (std::getline(file, line)) {
-        if (line.empty()) continue; // Skip empty lines
-
+    // First line: vertex list (comma-separated or tab-separated)
+    if (std::getline(file, line)) {
         std::stringstream ss(line);
-
-        // Header line: comma-separated vertices
-        if (line.find(',') != std::string::npos) {
-            std::string v;
-
-            while (std::getline(ss, v, ',')) {
-                v = trim(v);
-                if (!v.empty()) {
-                    map[v] = g.insertVertex(v);
-                }
+        std::string token;
+        char delim = (line.find(',') != std::string::npos) ? ',' : '\t';
+        while (std::getline(ss, token, delim)) {
+            token = trim(token);
+            if (!token.empty()) {
+                map[token] = g.insertVertex(token);
             }
-            continue;
         }
+    }
 
-        // Edge line: whitespace-separated
+    // Remaining lines: edge lines
+    while (std::getline(file, line)) {
+        if (line.empty()) continue;
+        std::stringstream ss(line);
         std::string u, v;
         double w;
-
         if (!(ss >> u >> v >> w)) continue;
 
-        // create vertices if they don’t exist
-        if (!map.count(u))
-            map[u] = g.insertVertex(u);
+        // Create vertices if they are not already in the map
+        if (!map.count(u)) map[u] = g.insertVertex(u);
+        if (!map.count(v)) map[v] = g.insertVertex(v);
 
-        if (!map.count(v))
-            map[v] = g.insertVertex(v);
-
-        // create edge
         g.insertEdge(map[u], map[v], w);
     }
 
