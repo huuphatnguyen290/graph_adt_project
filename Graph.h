@@ -58,25 +58,18 @@ template <typename V, typename E> class Graph {
             2. Remove edge from eList
             3. Delete vertex v*/
         void eraseVertex(Vertex<V, E>* v) {
-            // Go through each incident edges of vertex v
-            for (Edge<V, E>* e : v->incidentEdges()) {
-                
-                // Access the two end vertices
+            // Copy the incident edge list first to avoid modifying it while iterating
+            std::vector<Edge<V, E>*> edges(v->incidentEdges().begin(), v->incidentEdges().end());
+
+            for (Edge<V, E>* e : edges) {
                 std::pair<Vertex<V, E>*, Vertex<V, E>*> ends = e->endVertices();
-                // Remove edge from both end vertices
                 ends.first->removeEdge(e);
                 ends.second->removeEdge(e);
-
-                // remove edge from eList
                 eList.erase(std::remove(eList.begin(), eList.end(), e), eList.end());
-                // delete that edges
                 delete e;
             }
 
-            // 2. Remove vertex from global vertex list
             vList.erase(std::remove(vList.begin(), vList.end(), v), vList.end());
-
-            // 3. Delete vertex itself
             delete v;
         }
         // Remove edge e
